@@ -13,8 +13,8 @@ That sets up the aws backend
 ## Frontend
 
 1. as in .env.example create a .env file with the aws api url you got from setting up the backend
-2. npm install
-3. npm run dev
+2. ```npm install```
+3. ```npm run dev```
 
 - To run tests execute ```npm run test```
 
