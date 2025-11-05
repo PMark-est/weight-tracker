@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: WeightTracker
+Transform:
+- AWS::Serverless-2016-10-31
+Globals:
+  Api:
+    Cors:
+      AllowMethods: '''GET,POST,PUT,DELETE,OPTIONS'''
+      AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+      AllowOrigin: '''*'''
+Resources:
+  getWeightsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/get-weights.getWeightsHandler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: A simple example includes a HTTP get method to get all items from
+        a DynamoDB table.
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE:
+            Ref: SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /weights
+            Method: GET
+      CodeUri: getWeightsFunction
+    Metadata:
+      SamResourceId: getWeightsFunction
+  postWeightsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/post-weights.postWeightsHandler
+      Runtime: nodejs20.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: A simple example includes a HTTP post method to add one item to
+        a DynamoDB table.
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE:
+            Ref: SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /weights
+            Method: POST
+      CodeUri: postWeightsFunction
+    Metadata:
+      SamResourceId: postWeightsFunction
+  deleteWeightFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/delete-weights.deleteWeightsHandler
+      Runtime: nodejs20.x
+      MemorySize: 128
+      Timeout: 30
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE:
+            Ref: SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /weights/{id}
+            Method: DELETE
+      CodeUri: deleteWeightFunction
+    Metadata:
+      SamResourceId: deleteWeightFunction
+  putWeightFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/put-weights.putWeightsHandler
+      Runtime: nodejs20.x
+      MemorySize: 128
+      Timeout: 30
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: SampleTable
+      Environment:
+        Variables:
+          SAMPLE_TABLE:
+            Ref: SampleTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /weights/{id}
+            Method: PUT
+      CodeUri: putWeightFunction
+    Metadata:
+      SamResourceId: putWeightFunction
+  SampleTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+Outputs:
+  WebEndpoint:
+    Description: API Gateway endpoint URL for Prod stage
+    Value:
+      Fn::Sub: https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/
