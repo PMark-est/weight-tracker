@@ -3,8 +3,8 @@
 ## Backend
 
 1. configure aws credentials with 'aws configure'
-2. sam build in root folder
-3. sam deploy --guided in root folder
+2. ```sam build``` in root folder
+3. ```sam deploy --guided``` in root folder
 
 That sets up the aws backend
 
